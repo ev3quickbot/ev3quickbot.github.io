@@ -1,0 +1,73 @@
+﻿<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" ng-app="botApp">
+<head>
+    <title>EV3 5 Minute Bot</title>
+    <link href="Content/bootstrap.min.css" rel="stylesheet" />
+</head>
+<body>
+    <div class="text-center" ng-controller="InstructionsCtrl">
+        <h1>EV3 QuickBot</h1>
+        <p class="text-center">Instructions for quickly creating a robot with the EV3 Lego Mindstorms Kit.</p>
+        <div class="row">
+            <div class="col-md-6">
+                <center><img class="img-responsive" src="images/bot.jpg" style="padding:2%"/></center>
+            </div>
+            <div class="col-md-6">
+                <center><img class="img-responsive" src="images/360.gif" style="padding:2%"/></center>
+            </div>
+            <div>
+                <h1 class="text-center">You will need:</h1>
+                <center><img class="img-responsive" src="images/parts.jpg" style="padding:2%"/></center>
+            </div>
+        </div>
+        <div class="row" ng-repeat="index in range(0, instructions.length)" style="padding:2%">
+            <h1 class="text-center" ng-bind="instructions[index].name"></h1>
+            <center>
+                <img ng-if="instructions[index].children" class="img-responsive" ng-src="images\{{index}}\finish.jpg" style="padding:2%"/>
+            </center>
+            <div ng-if="!instructions[index].children" class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-repeat="n in range(0, instructions[index].total)">
+                <div ng-if="n < instructions[index].total - 1">
+                    <h3 class="text-center">Step {{n + 1}}</h3>
+                    <img class="img-responsive" ng-src="images\{{index}}\{{n}}.jpg" style="padding:2%"/>
+                </div>
+                <div ng-if="n == instructions[index].total - 1">
+                    <h3 class="text-center">Finished!</h3>
+                    <img class="img-responsive" ng-src="images\{{index}}\finish.jpg" style="padding:2%"/>
+                </div>
+            </div>
+            <div class="row" ng-repeat="childIndex in range(0, instructions[index].children.length)">
+                <h3 class="text-center" ng-bind="instructions[index].children[childIndex].name"></h3>
+                <div class="col-lg-3 col-md-4 col-sm-6 col-xs-12" ng-repeat="j in range(0, instructions[index].children[childIndex].total)">
+                    <div ng-if="j < instructions[index].children[childIndex].total - 1">
+                        <h3 class="text-center">Step {{j + 1}}</h3>
+                        <img class="img-responsive" ng-src="images\{{index}}\{{childIndex}}\{{j}}.jpg" style="padding:2%"/>
+                    </div>
+                    <div ng-if="j == instructions[index].children[childIndex].total - 1">
+                        <h3 class="text-center">Finished!</h3>
+                        <img class="img-responsive" ng-src="images\{{index}}\{{childIndex}}\finish.jpg" style="padding:2%"/>
+                    </div>
+                </div>        
+            </div>
+        </div>
+        <h1>Complete!!</h1>
+        <center><img class="img-responsive" src="images/360.gif" style="padding:2%"/></center>
+    </div>
+    <script src="scripts/angular.min.js"></script>
+    <script>
+        angular.module('botApp', [])
+        .controller('InstructionsCtrl', ['$scope', '$http',
+            function ($scope, $http) {
+                $http.get('instructions.js').success(function (data) {
+                    $scope.instructions = data.instructions;
+                });
+
+                $scope.range = function (min, max, step) {
+                    step = step || 1;
+                    var input = [];
+                    for (var i = min; i < max; i += step) input.push(i);
+                    return input;
+                };
+            }]);
+    </script>
+</body>
+</html>
